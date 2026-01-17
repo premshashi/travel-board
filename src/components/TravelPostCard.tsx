@@ -1,6 +1,6 @@
 import { TravelPost } from '@/types/travel';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface TravelPostCardProps {
   post: TravelPost;
@@ -20,7 +20,7 @@ export const TravelPostCard = ({ post, onClick }: TravelPostCardProps) => {
           <span className="text-sm text-muted-foreground">{post.originFull}</span>
         </div>
         <div className="flex items-center gap-2 mt-2">
-          <ArrowDown className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} />
+          <ChevronDown className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} />
           <span className="font-semibold">{post.destination}</span>
           <span className="text-muted-foreground">–</span>
           <span className="text-sm text-muted-foreground">{post.destinationFull}</span>
