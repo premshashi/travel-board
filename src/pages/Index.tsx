@@ -1,17 +1,20 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { TravelPost, FilterOptions } from '@/types/travel';
 import { samplePosts } from '@/data/samplePosts';
+import { addTravelPost, getTravelPosts } from '@/lib/firebase';
 import { TravelPostCard } from '@/components/TravelPostCard';
 import { PostDetailModal } from '@/components/PostDetailModal';
 import { CreatePostModal } from '@/components/CreatePostModal';
 import { FilterSheet } from '@/components/FilterSheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, SlidersHorizontal, PlaneTakeoff } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, PlaneTakeoff, Loader2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [posts, setPosts] = useState<TravelPost[]>(samplePosts);
+  const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<TravelPost | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -23,18 +26,45 @@ const Index = () => {
     airline: '',
   });
 
+  // Load posts from Firebase on mount
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const firebasePosts = await getTravelPosts();
+        // Combine Firebase posts with sample posts for demo, prioritizing Firebase
+        setPosts(firebasePosts.length > 0 ? firebasePosts : samplePosts);
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        toast.error('Using sample data - configure Firebase to persist posts');
+        setPosts(samplePosts);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPosts();
+  }, []);
+
   const handlePostClick = (post: TravelPost) => {
     setSelectedPost(post);
     setDetailOpen(true);
   };
 
-  const handleCreatePost = (postData: Omit<TravelPost, 'id' | 'createdAt'>) => {
-    const newPost: TravelPost = {
-      ...postData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString().split('T')[0],
-    };
-    setPosts([newPost, ...posts]);
+  const handleCreatePost = async (postData: Omit<TravelPost, 'id' | 'createdAt'>) => {
+    try {
+      const newPost = await addTravelPost(postData);
+      setPosts([newPost, ...posts]);
+      toast.success('Post created successfully!');
+    } catch (error) {
+      console.error('Error creating post:', error);
+      // Fallback to local state if Firebase fails
+      const localPost: TravelPost = {
+        ...postData,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString().split('T')[0],
+      };
+      setPosts([localPost, ...posts]);
+      toast.error('Post saved locally - configure Firebase to persist');
+    }
   };
 
   const clearFilters = () => {
@@ -138,7 +168,11 @@ const Index = () => {
 
       {/* Posts List */}
       <main className="container max-w-lg mx-auto px-4 pb-8">
-        {groupedPosts.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          </div>
+        ) : groupedPosts.length === 0 ? (
           <div className="text-center py-12">
             <PlaneTakeoff className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">No travel posts found</p>
