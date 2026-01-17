@@ -49,6 +49,12 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
           label: 'Call',
           href: `tel:${post.contactId}`,
         };
+      default:
+        return {
+          icon: MessageCircle,
+          label: 'Contact',
+          href: '#',
+        };
     }
   };
 
