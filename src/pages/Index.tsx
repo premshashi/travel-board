@@ -7,7 +7,7 @@ import { CreatePostModal } from '@/components/CreatePostModal';
 import { FilterSheet } from '@/components/FilterSheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, SlidersHorizontal, Plane } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, PlaneTakeoff } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 const Index = () => {
@@ -98,9 +98,9 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="container max-w-lg mx-auto px-4 py-4">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Plane className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-semibold">TravelBuddy</h1>
+          <div className="flex items-center justify-center gap-2.5 mb-4">
+            <PlaneTakeoff className="w-5 h-5 text-primary" strokeWidth={2.5} />
+            <h1 className="text-xl font-semibold tracking-tight">TravelBuddy</h1>
           </div>
           
           <Button 
@@ -140,7 +140,7 @@ const Index = () => {
       <main className="container max-w-lg mx-auto px-4 pb-8">
         {groupedPosts.length === 0 ? (
           <div className="text-center py-12">
-            <Plane className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <PlaneTakeoff className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">No travel posts found</p>
             <p className="text-sm text-muted-foreground mt-1">
               Try adjusting your search or filters
