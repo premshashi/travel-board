@@ -5,12 +5,13 @@ import { TravelPost } from '@/types/travel';
 // TODO: Replace with your Firebase config from Firebase Console
 // Go to: Firebase Console > Project Settings > Your apps > Web app
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCJ5w9lKnLo46z8fzx7WgvEjD5qkFkj7CI",
+  authDomain: "travelboard-78c4e.firebaseapp.com",
+  projectId: "travelboard-78c4e",
+  storageBucket: "travelboard-78c4e.firebasestorage.app",
+  messagingSenderId: "335185155350",
+  appId: "1:335185155350:web:e6589989aab1be07496c37",
+  measurementId: "G-V1019B8SV8"
 };
 
 const app = initializeApp(firebaseConfig);
