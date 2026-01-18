@@ -29,7 +29,7 @@ export const samplePosts: TravelPost[] = [
     airline: 'United Airlines',
     requestType: 'need_companion',
     postedBy: 'Ananya',
-    contactMethod: 'whatsapp',
+    contactMethod: 'phone',
     contactId: '+1234567890',
     createdAt: '2026-01-12',
   },
