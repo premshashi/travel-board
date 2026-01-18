@@ -10,8 +10,9 @@ export interface TravelPost {
   airline: string;
   requestType: 'need_companion' | 'offering_companion';
   postedBy: string;
-  contactMethod: 'instagram' | 'whatsapp' | 'email' | 'phone';
+  contactMethod: 'instagram' | 'facebook' | 'email' | 'phone';
   contactId: string;
+  additionalComments?: string;
   createdAt: string;
 }
 

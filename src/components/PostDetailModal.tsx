@@ -29,13 +29,13 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
         return {
           icon: MessageCircle,
           label: 'Direct Message on Instagram',
-          href: `https://instagram.com/${post.contactId}`,
+          href: `https://ig.me/m/${post.contactId}`,
         };
-      case 'whatsapp':
+      case 'facebook':
         return {
           icon: MessageCircle,
-          label: 'Message on WhatsApp',
-          href: `https://wa.me/${post.contactId.replace(/[^0-9]/g, '')}`,
+          label: 'Message on Facebook',
+          href: `https://m.me/${post.contactId}`,
         };
       case 'email':
         return {
@@ -66,7 +66,7 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
     { label: 'Origin', value: post.origin },
     { label: 'Destination', value: post.destination },
     { label: 'Flight Number', value: post.flightNumber },
-    { label: 'Request Type', value: post.requestType === 'need_companion' ? 'Need a Travel Companion' : 'Offering to Accompany' },
+    { label: 'Request Type', value: post.requestType === 'need_companion' ? 'Need a Travel Companion' : 'Willing to Help' },
     { label: 'Posted By', value: post.postedBy },
     { label: 'Contact Method', value: post.contactMethod.charAt(0).toUpperCase() + post.contactMethod.slice(1) },
     { label: 'Contact ID', value: post.contactId },
