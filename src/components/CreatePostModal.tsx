@@ -34,22 +34,22 @@ interface CreatePostModalProps {
   onSubmit: (post: Omit<TravelPost, 'id' | 'createdAt'>) => void;
 }
 
-// Generate time options in 15-minute intervals
+// Generate time options for every minute
 const generateTimeOptions = () => {
-  const times: string[] = [];
+  const times: { value: string; label: string }[] = [];
   for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
+    for (let minute = 0; minute < 60; minute += 5) {
       const h = hour.toString().padStart(2, '0');
       const m = minute.toString().padStart(2, '0');
       const period = hour >= 12 ? 'PM' : 'AM';
       const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       times.push({
         value: `${h}:${m}`,
-        label: `${displayHour}:${m} ${period}`
-      } as any);
+        label: `${displayHour}:${m.padStart(2, '0')} ${period}`
+      });
     }
   }
-  return times as unknown as { value: string; label: string }[];
+  return times;
 };
 
 const TIME_OPTIONS = generateTimeOptions();
@@ -65,7 +65,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
     airline: '',
     requestType: 'need_companion' as 'need_companion' | 'offering_companion',
     postedBy: '',
-    contactMethod: 'instagram' as 'instagram' | 'facebook' | 'email' | 'phone',
+    contactMethod: 'instagram' as 'instagram' | 'facebook' | 'email',
     contactId: '',
     additionalComments: '',
   });
@@ -121,14 +121,18 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
         return 'username';
       case 'email':
         return 'Enter Email Address';
-      case 'phone':
-        return '+1234567890';
       default:
         return 'Enter contact';
     }
   };
 
   const selectedTimeLabel = TIME_OPTIONS.find(t => t.value === formData.departureTime)?.label;
+
+  const handleFlightNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow digits
+    const value = e.target.value.replace(/\D/g, '');
+    setFormData({ ...formData, flightNumber: value });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -245,16 +249,6 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Flight Number</Label>
-              <Input
-                placeholder="e.g., EK 523"
-                value={formData.flightNumber}
-                onChange={(e) => setFormData({ ...formData, flightNumber: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
               <Label>Airline</Label>
               <Select
                 value={formData.airline}
@@ -271,6 +265,18 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Flight Number</Label>
+              <Input
+                placeholder="e.g., 523"
+                value={formData.flightNumber}
+                onChange={handleFlightNumberChange}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+              />
             </div>
           </div>
 
@@ -307,7 +313,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
               <Label>Contact Method</Label>
               <Select
                 value={formData.contactMethod}
-                onValueChange={(value: 'instagram' | 'facebook' | 'email' | 'phone') => 
+                onValueChange={(value: 'instagram' | 'facebook' | 'email') => 
                   setFormData({ ...formData, contactMethod: value })
                 }
               >
@@ -318,7 +324,6 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
                   <SelectItem value="instagram">Instagram</SelectItem>
                   <SelectItem value="facebook">Facebook</SelectItem>
                   <SelectItem value="email">Email</SelectItem>
-                  <SelectItem value="phone">Phone</SelectItem>
                 </SelectContent>
               </Select>
             </div>
