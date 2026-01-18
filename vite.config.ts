@@ -18,4 +18,6 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  base: '/travel-board/' // Replace with your GitHub repo name
+
 }));
