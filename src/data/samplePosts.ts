@@ -29,8 +29,8 @@ export const samplePosts: TravelPost[] = [
     airline: 'United Airlines',
     requestType: 'need_companion',
     postedBy: 'Ananya',
-    contactMethod: 'phone',
-    contactId: '+1234567890',
+    contactMethod: 'facebook',
+    contactId: 'ananya.travels',
     createdAt: '2026-01-12',
   },
   {
@@ -77,8 +77,8 @@ export const samplePosts: TravelPost[] = [
     airline: 'Etihad Airways',
     requestType: 'offering_companion',
     postedBy: 'Vikram',
-    contactMethod: 'phone',
-    contactId: '+1987654321',
+    contactMethod: 'instagram',
+    contactId: 'vikram_travels',
     createdAt: '2026-01-20',
   },
 ];

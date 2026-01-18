@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { MessageCircle, Mail, Phone } from 'lucide-react';
+import { MessageCircle, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface PostDetailModalProps {
@@ -42,12 +42,6 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
           icon: Mail,
           label: 'Send Email',
           href: `mailto:${post.contactId}`,
-        };
-      case 'phone':
-        return {
-          icon: Phone,
-          label: 'Call',
-          href: `tel:${post.contactId}`,
         };
       default:
         return {
