@@ -104,6 +104,24 @@ export const FilterSheet = ({
               </SelectContent>
             </Select>
           </div>
+
+          <div className="space-y-2">
+            <Label>Request Type</Label>
+            <Select
+              value={filters.requestType}
+              onValueChange={(value) => onFiltersChange({ ...filters, requestType: value })}
+            >
+              <SelectTrigger className="justify-between">
+                <SelectValue placeholder="Any" />
+                <ChevronRight className="h-4 w-4 opacity-50" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any</SelectItem>
+                <SelectItem value="need_companion">Need a Travel Companion</SelectItem>
+                <SelectItem value="offering_companion">Willing to Help</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <SheetFooter className="flex-row gap-4 pt-4">

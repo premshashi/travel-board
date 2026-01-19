@@ -24,6 +24,7 @@ const Index = () => {
     origin: '',
     destination: '',
     airline: '',
+    requestType: '',
   });
 
   // Load posts from Firebase on mount
@@ -68,7 +69,7 @@ const Index = () => {
   };
 
   const clearFilters = () => {
-    setFilters({ origin: '', destination: '', airline: '' });
+    setFilters({ origin: '', destination: '', airline: '', requestType: '' });
   };
 
   const filteredPosts = useMemo(() => {
@@ -101,6 +102,11 @@ const Index = () => {
         return false;
       }
 
+      // Filter by request type
+      if (filters.requestType && filters.requestType !== 'any' && post.requestType !== filters.requestType) {
+        return false;
+      }
+
       return true;
     });
   }, [posts, searchQuery, filters]);
@@ -121,7 +127,7 @@ const Index = () => {
       .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime());
   }, [filteredPosts]);
 
-  const hasActiveFilters = filters.origin || filters.destination || filters.airline;
+  const hasActiveFilters = filters.origin || filters.destination || filters.airline || filters.requestType;
 
   return (
     <div className="min-h-screen bg-background">
