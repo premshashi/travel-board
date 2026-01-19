@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { TravelPost, AIRPORTS, AIRLINES } from '@/types/travel';
 import {
   Dialog,
@@ -24,9 +24,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Clock } from 'lucide-react';
+import { CalendarIcon, Clock, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface CreatePostModalProps {
   open: boolean;
@@ -34,7 +35,7 @@ interface CreatePostModalProps {
   onSubmit: (post: Omit<TravelPost, 'id' | 'createdAt'>) => void;
 }
 
-// Generate time options for every minute
+// Generate time options for every 5 minutes
 const generateTimeOptions = () => {
   const times: { value: string; label: string }[] = [];
   for (let hour = 0; hour < 24; hour++) {
@@ -54,6 +55,29 @@ const generateTimeOptions = () => {
 
 const TIME_OPTIONS = generateTimeOptions();
 
+// Generate random captcha
+const generateCaptcha = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let captcha = '';
+  for (let i = 0; i < 6; i++) {
+    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return captcha;
+};
+
+// Email validation regex
+const isValidEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Required field label component
+const RequiredLabel = ({ children }: { children: React.ReactNode }) => (
+  <Label>
+    {children} <span className="text-red-500">*</span>
+  </Label>
+);
+
 export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModalProps) => {
   const [date, setDate] = useState<Date>();
   const [timeOpen, setTimeOpen] = useState(false);
@@ -69,10 +93,47 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
     contactId: '',
     additionalComments: '',
   });
+  const [captcha, setCaptcha] = useState(generateCaptcha());
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  // Check if all required fields are filled
+  const isFormValid = useMemo(() => {
+    const hasRequiredFields = 
+      date &&
+      formData.departureTime &&
+      formData.origin &&
+      formData.destination &&
+      formData.flightNumber &&
+      formData.airline &&
+      formData.requestType &&
+      formData.postedBy &&
+      formData.contactMethod &&
+      formData.contactId &&
+      captchaInput.toUpperCase() === captcha;
+
+    // Additional email validation
+    if (formData.contactMethod === 'email' && formData.contactId) {
+      return hasRequiredFields && isValidEmail(formData.contactId);
+    }
+
+    return hasRequiredFields;
+  }, [date, formData, captchaInput, captcha]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) return;
+
+    // Validate email if email method selected
+    if (formData.contactMethod === 'email' && !isValidEmail(formData.contactId)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    // Validate captcha
+    if (captchaInput.toUpperCase() !== captcha) {
+      return;
+    }
 
     // Format the time for display
     const timeOption = TIME_OPTIONS.find(t => t.value === formData.departureTime);
@@ -108,6 +169,9 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
       contactId: '',
       additionalComments: '',
     });
+    setCaptcha(generateCaptcha());
+    setCaptchaInput('');
+    setEmailError('');
     onOpenChange(false);
   };
 
@@ -134,6 +198,26 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
     setFormData({ ...formData, flightNumber: value });
   };
 
+  const handleContactIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData({ ...formData, contactId: value });
+    
+    // Clear error when user starts typing
+    if (emailError) {
+      setEmailError('');
+    }
+
+    // Validate email in real-time if email method selected
+    if (formData.contactMethod === 'email' && value && !isValidEmail(value)) {
+      setEmailError('Please enter a valid email address');
+    }
+  };
+
+  const refreshCaptcha = () => {
+    setCaptcha(generateCaptcha());
+    setCaptchaInput('');
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
@@ -143,7 +227,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Travel Date</Label>
+            <RequiredLabel>Travel Date</RequiredLabel>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -171,7 +255,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
           </div>
 
           <div className="space-y-2">
-            <Label>Departure Time</Label>
+            <RequiredLabel>Departure Time</RequiredLabel>
             <Popover open={timeOpen} onOpenChange={setTimeOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -209,7 +293,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Origin</Label>
+              <RequiredLabel>Origin</RequiredLabel>
               <Select
                 value={formData.origin}
                 onValueChange={(value) => setFormData({ ...formData, origin: value })}
@@ -228,7 +312,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
             </div>
 
             <div className="space-y-2">
-              <Label>Destination</Label>
+              <RequiredLabel>Destination</RequiredLabel>
               <Select
                 value={formData.destination}
                 onValueChange={(value) => setFormData({ ...formData, destination: value })}
@@ -249,7 +333,7 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Airline</Label>
+              <RequiredLabel>Airline</RequiredLabel>
               <Select
                 value={formData.airline}
                 onValueChange={(value) => setFormData({ ...formData, airline: value })}
@@ -268,20 +352,19 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
             </div>
 
             <div className="space-y-2">
-              <Label>Flight Number</Label>
+              <RequiredLabel>Flight Number</RequiredLabel>
               <Input
                 placeholder="e.g., 523"
                 value={formData.flightNumber}
                 onChange={handleFlightNumberChange}
                 inputMode="numeric"
                 pattern="[0-9]*"
-                required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Request Type</Label>
+            <RequiredLabel>Request Type</RequiredLabel>
             <Select
               value={formData.requestType}
               onValueChange={(value: 'need_companion' | 'offering_companion') => 
@@ -299,23 +382,23 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
           </div>
 
           <div className="space-y-2">
-            <Label>Your Name</Label>
+            <RequiredLabel>Your Name</RequiredLabel>
             <Input
               placeholder="Enter your name"
               value={formData.postedBy}
               onChange={(e) => setFormData({ ...formData, postedBy: e.target.value })}
-              required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Contact Method</Label>
+              <RequiredLabel>Contact Method</RequiredLabel>
               <Select
                 value={formData.contactMethod}
-                onValueChange={(value: 'instagram' | 'facebook' | 'email') => 
-                  setFormData({ ...formData, contactMethod: value })
-                }
+                onValueChange={(value: 'instagram' | 'facebook' | 'email') => {
+                  setFormData({ ...formData, contactMethod: value, contactId: '' });
+                  setEmailError('');
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -329,13 +412,16 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
             </div>
 
             <div className="space-y-2">
-              <Label>Contact ID</Label>
+              <RequiredLabel>Contact ID</RequiredLabel>
               <Input
                 placeholder={getContactPlaceholder()}
                 value={formData.contactId}
-                onChange={(e) => setFormData({ ...formData, contactId: e.target.value })}
-                required
+                onChange={handleContactIdChange}
+                type={formData.contactMethod === 'email' ? 'email' : 'text'}
               />
+              {emailError && (
+                <p className="text-sm text-red-500">{emailError}</p>
+              )}
             </div>
           </div>
 
@@ -349,8 +435,47 @@ export const CreatePostModal = ({ open, onOpenChange, onSubmit }: CreatePostModa
             />
           </div>
 
-          <Button type="submit" className="w-full" size="lg">
-            Create Post
+          {/* Captcha Section */}
+          <div className="space-y-2 p-4 bg-muted rounded-lg">
+            <RequiredLabel>Verify you're human</RequiredLabel>
+            <div className="flex items-center gap-3">
+              <div className="bg-background px-4 py-2 rounded border font-mono text-lg tracking-widest select-none">
+                {captcha}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={refreshCaptcha}
+                title="Get new captcha"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+            </div>
+            <Input
+              placeholder="Enter the code above"
+              value={captchaInput}
+              onChange={(e) => setCaptchaInput(e.target.value.toUpperCase())}
+              className="mt-2"
+              maxLength={6}
+            />
+            {captchaInput && captchaInput.toUpperCase() !== captcha && (
+              <p className="text-sm text-red-500">Captcha does not match</p>
+            )}
+          </div>
+
+          <Button 
+            type="submit" 
+            className={cn(
+              "w-full transition-colors",
+              isFormValid 
+                ? "bg-green-600 hover:bg-green-700 text-white" 
+                : "bg-muted text-muted-foreground cursor-not-allowed"
+            )}
+            size="lg"
+            disabled={!isFormValid}
+          >
+            Submit Post
           </Button>
         </form>
       </DialogContent>

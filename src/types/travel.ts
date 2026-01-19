@@ -20,6 +20,7 @@ export interface FilterOptions {
   origin: string;
   destination: string;
   airline: string;
+  requestType: string;
 }
 
 export const AIRPORTS = {
