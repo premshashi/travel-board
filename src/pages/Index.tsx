@@ -6,6 +6,7 @@ import { TravelPostCard } from '@/components/TravelPostCard';
 import { PostDetailModal } from '@/components/PostDetailModal';
 import { CreatePostModal } from '@/components/CreatePostModal';
 import { FilterSheet } from '@/components/FilterSheet';
+import FeedbackButton from '@/components/FeedbackButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, SlidersHorizontal, PlaneTakeoff, Loader2 } from 'lucide-react';
@@ -228,6 +229,9 @@ const Index = () => {
         onFiltersChange={setFilters}
         onClear={clearFilters}
       />
+
+      {/* Feedback Button */}
+      <FeedbackButton />
     </div>
   );
 };
