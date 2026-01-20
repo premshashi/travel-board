@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp, Firestore } from 'firebase/firestore';
 import { TravelPost } from '@/types/travel';
 
 // TODO: Replace with your Firebase config from Firebase Console
@@ -14,12 +14,25 @@ const firebaseConfig = {
   measurementId: "G-V1019B8SV8"
 };
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+let app: FirebaseApp | null = null;
+let db: Firestore | null = null;
+
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+}
+
+export { db };
 
 const POSTS_COLLECTION = 'travel_posts';
 
 export const addTravelPost = async (postData: Omit<TravelPost, 'id' | 'createdAt'>): Promise<TravelPost> => {
+  if (!db) {
+    throw new Error('Firebase not initialized');
+  }
+  
   const docRef = await addDoc(collection(db, POSTS_COLLECTION), {
     ...postData,
     createdAt: Timestamp.now(),
@@ -33,6 +46,11 @@ export const addTravelPost = async (postData: Omit<TravelPost, 'id' | 'createdAt
 };
 
 export const getTravelPosts = async (): Promise<TravelPost[]> => {
+  if (!db) {
+    console.warn('Firebase not initialized, returning empty array');
+    return [];
+  }
+  
   const q = query(collection(db, POSTS_COLLECTION), orderBy('createdAt', 'desc'));
   const querySnapshot = await getDocs(q);
   
