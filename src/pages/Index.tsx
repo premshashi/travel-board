@@ -74,7 +74,14 @@ const Index = () => {
   };
 
   const filteredPosts = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return posts.filter((post) => {
+      // Only show future travel dates
+      const travelDate = new Date(post.travelDate);
+      if (travelDate < today) return false;
+
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
