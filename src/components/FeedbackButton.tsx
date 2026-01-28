@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 
-const FeedbackButton = forwardRef<HTMLDivElement>((_, ref) => {
+const FeedbackButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
@@ -126,8 +126,6 @@ const FeedbackButton = forwardRef<HTMLDivElement>((_, ref) => {
       </Dialog>
     </>
   );
-});
-
-FeedbackButton.displayName = 'FeedbackButton';
+};
 
 export default FeedbackButton;
