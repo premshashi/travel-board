@@ -7,7 +7,7 @@ import { PostDetailModal } from '@/components/PostDetailModal';
 import { CreatePostModal } from '@/components/CreatePostModal';
 import { FilterSheet } from '@/components/FilterSheet';
 import FeedbackButton from '@/components/FeedbackButton';
-import { AuthButton } from '@/components/AuthButton';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, SlidersHorizontal, PlaneTakeoff, Loader2 } from 'lucide-react';
@@ -148,7 +148,7 @@ const Index = () => {
               <PlaneTakeoff className="w-5 h-5 text-primary" strokeWidth={2.5} />
               <h1 className="text-xl font-semibold tracking-tight">TravelBuddy</h1>
             </div>
-            <AuthButton />
+            
           </div>
           
           <Button 
