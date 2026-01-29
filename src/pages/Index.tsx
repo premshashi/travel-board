@@ -143,12 +143,9 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="container max-w-lg mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <PlaneTakeoff className="w-5 h-5 text-primary" strokeWidth={2.5} />
-              <h1 className="text-xl font-semibold tracking-tight">TravelBuddy</h1>
-            </div>
-            
+          <div className="flex items-center justify-center gap-2.5 mb-4">
+            <PlaneTakeoff className="w-5 h-5 text-primary" strokeWidth={2.5} />
+            <h1 className="text-xl font-semibold tracking-tight">TravelBuddy</h1>
           </div>
           
           <Button 
