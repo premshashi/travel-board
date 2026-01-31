@@ -59,6 +59,7 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
     { label: 'Departure Time', value: post.departureTime },
     { label: 'Origin', value: post.origin },
     { label: 'Destination', value: post.destination },
+    { label: 'Airline', value: post.airline },
     { label: 'Flight Number', value: post.flightNumber },
     { label: 'Request Type', value: post.requestType === 'need_companion' ? 'Need a Travel Companion' : 'Willing to Help' },
     { label: 'Posted By', value: post.postedBy },
