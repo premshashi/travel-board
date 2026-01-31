@@ -26,7 +26,7 @@ export const TravelPostCard = ({ post, onClick }: TravelPostCardProps) => {
           <span className="text-sm text-muted-foreground">{post.destinationFull}</span>
         </div>
         <p className="text-sm text-muted-foreground mt-3">
-          {post.requestType === 'need_companion' 
+          {post.airline} · {post.requestType === 'need_companion' 
             ? 'Need a Travel Companion' 
             : 'Offering to Accompany'}
         </p>
