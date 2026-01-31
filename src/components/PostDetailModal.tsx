@@ -88,7 +88,14 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
           ))}
         </div>
 
-        <Button 
+        {post.additionalComments && (
+          <div className="py-3">
+            <span className="text-muted-foreground">Additional Comments</span>
+            <p className="mt-1 text-sm">{post.additionalComments}</p>
+          </div>
+        )}
+
+        <Button
           className="w-full gap-2" 
           size="lg"
           onClick={() => window.open(contactAction.href, '_blank')}
